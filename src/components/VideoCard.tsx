@@ -22,8 +22,7 @@ export default function VideoCard({
   const [likesCount, setLikesCount] = useState(video.likes_count)
   const [playbackError, setPlaybackError] = useState<string | null>(null)
 
-  // Tiene l'elemento <video> sincronizzato con lo stato globale del mute,
-  // così resta smutato (o muto) quando l'utente scorre su un nuovo video.
+  // Sincronizza l'elemento video con lo stato muto globale
   useEffect(() => {
     if (ref.current) ref.current.muted = muted
   }, [muted])
@@ -38,7 +37,6 @@ export default function VideoCard({
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
             el.play().catch((err) => {
-              // eslint-disable-next-line no-console
               console.warn('Riproduzione bloccata dal browser:', err)
             })
           } else {
@@ -54,15 +52,14 @@ export default function VideoCard({
 
   function describeError(el: HTMLVideoElement): string {
     const code = el.error?.code
-    // eslint-disable-next-line no-console
     console.error('Errore video:', el.error, 'src:', video.video_url)
     switch (code) {
       case MediaError.MEDIA_ERR_NETWORK:
-        return 'Errore di rete: il file non è raggiungibile (controlla che il bucket "videos" sia pubblico).'
+        return 'Errore di rete: il file non è raggiungibile.'
       case MediaError.MEDIA_ERR_DECODE:
         return 'Il browser non riesce a decodificare questo file (codec non supportato).'
       case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-        return 'URL del video non valido o inaccessibile (404 o permessi mancanti sul bucket).'
+        return 'URL del video non valido o inaccessibile.'
       default:
         return 'Errore sconosciuto nella riproduzione del video.'
     }
@@ -87,7 +84,7 @@ export default function VideoCard({
       try {
         await navigator.share({ url })
       } catch {
-        /* utente ha annullato */
+        /* annullato */
       }
     } else {
       await navigator.clipboard.writeText(url)
@@ -99,7 +96,7 @@ export default function VideoCard({
       ref={containerRef}
       className="relative h-full w-full flex items-center justify-center bg-black overflow-hidden"
     >
-      {/* Contenitore interno strutturato che sfrutta le classi CSS personalizzate */}
+      {/* Contenitore player video */}
       <div className="video-player-container w-full h-full flex items-center justify-center">
         <video
           ref={ref}
@@ -111,7 +108,6 @@ export default function VideoCard({
           preload="auto"
           onClick={() => (ref.current?.paused ? ref.current.play() : ref.current?.pause())}
           onError={(e) => setPlaybackError(describeError(e.currentTarget))}
-          /* Sostituito object-cover con object-contain per evitare ritagli su mobile */
           className="h-full w-full object-contain"
         />
       </div>
@@ -121,46 +117,54 @@ export default function VideoCard({
           <AlertTriangle className="text-flare" size={32} />
           <p className="text-sm font-medium text-white">Questo video non può essere riprodotto</p>
           <p className="text-xs text-mist">{playbackError}</p>
-          <p className="break-all text-[10px] text-mist/60">{video.video_url}</p>
         </div>
       )}
 
+      {/* Pulsante Audio protetto da safe-top-padding */}
       <button
         onClick={onToggleMute}
-        className="absolute right-4 top-4 rounded-full bg-black/40 p-2 text-white backdrop-blur z-10"
+        className="absolute right-4 safe-top-padding rounded-full bg-black/50 p-2.5 text-white backdrop-blur z-10 active:scale-95 transition-transform"
         aria-label="Audio"
       >
-        {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
       </button>
 
-      {/* Interfaccia utente (Pulsanti, Nome Utente, Didascalia) */}
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/85 via-black/25 to-transparent p-4 pb-6 z-10 pointer-events-none">
+      {/* Interfaccia Utente protetta da safe-bottom-padding */}
+      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/90 via-black/40 to-transparent px-4 safe-bottom-padding z-10 pointer-events-none">
         
-        {/* Testi descrittivi (allineati a sinistra per non coprire il centro del video orizzontale) */}
-        <div className="max-w-[75%] text-left text-white flex flex-col justify-end pointer-events-auto">
-          <p className="truncate font-display text-sm font-semibold">
+        {/* Testi descrittivi (Allineati a sinistra, distanziati dai bottoni per non sovrapporsi) */}
+        <div className="max-w-[70%] text-left text-white flex flex-col justify-end pointer-events-auto mb-2">
+          <p className="truncate font-display text-sm font-bold tracking-wide drop-shadow-md">
             @{video.profiles?.username ?? 'utente'}
           </p>
           {video.caption && (
-            <p className="mt-1 line-clamp-2 text-sm text-white/90">{video.caption}</p>
+            <p className="mt-1.5 line-clamp-3 text-xs text-white/95 leading-relaxed drop-shadow-sm">
+              {video.caption}
+            </p>
           )}
         </div>
 
-        {/* Pulsanti azioni verticali (allineati a destra) */}
-        <div className="flex shrink-0 flex-col items-center gap-5 pointer-events-auto">
-          <button onClick={toggleLike} className="flex flex-col items-center gap-1 text-white active:scale-90">
-            <Heart size={28} className={liked ? 'fill-flare text-flare' : 'text-white'} />
-            <span className="text-xs font-medium">{likesCount}</span>
+        {/* Pulsanti azioni verticali (Allineati a destra) */}
+        <div className="flex shrink-0 flex-col items-center gap-5 pointer-events-auto mb-2 pl-2">
+          <button onClick={toggleLike} className="flex flex-col items-center gap-1 text-white active:scale-90 transition-transform">
+            <div className="p-2 bg-black/20 rounded-full backdrop-blur-sm">
+              <Heart size={26} className={liked ? 'fill-flare text-flare' : 'text-white'} />
+            </div>
+            <span className="text-[11px] font-semibold drop-shadow-md">{likesCount}</span>
           </button>
-          <button
-            onClick={() => onOpenComments(video)}
-            className="flex flex-col items-center gap-1 text-white active:scale-90"
-          >
-            <MessageCircle size={28} />
-            <span className="text-xs font-medium">{video.comments_count}</span>
+          
+          <button onClick={() => onOpenComments(video)} className="flex flex-col items-center gap-1 text-white active:scale-90 transition-transform">
+            <div className="p-2 bg-black/20 rounded-full backdrop-blur-sm">
+              <MessageCircle size={26} />
+            </div>
+            <span className="text-[11px] font-semibold drop-shadow-md">{video.comments_count}</span>
           </button>
-          <button onClick={handleShare} className="flex flex-col items-center gap-1 text-white active:scale-90">
-            <Share2 size={26} />
+          
+          <button onClick={handleShare} className="flex flex-col items-center gap-1 text-white active:scale-90 transition-transform">
+            <div className="p-2 bg-black/20 rounded-full backdrop-blur-sm">
+              <Share2 size={24} />
+            </div>
+            <span className="text-[11px] font-semibold drop-shadow-md">Condividi</span>
           </button>
         </div>
 
