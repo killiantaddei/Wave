@@ -89,9 +89,9 @@ export default function Upload() {
   }
 
   return (
-    /* Modificato il padding top per spingere l'interfaccia al limite in alto del display */
+    /* Aumentato il padding-bottom a pb-36 per dare spazio allo scroll sopra la barra di navigazione */
     <div 
-      className="min-h-[100dvh] bg-ink px-5 pb-28"
+      className="min-h-[100dvh] bg-ink px-5 pb-36"
       style={{ paddingTop: 'calc(0.5rem + env(safe-area-inset-top, 0px))' }}
     >
       <h1 className="font-display text-2xl font-semibold text-white">Carica un video</h1>
