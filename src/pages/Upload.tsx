@@ -82,61 +82,79 @@ export default function Upload() {
     }
   }
 
+  function handleRemoveFile() {
+    setFile(null)
+    setPreviewUrl(null)
+    setError(null)
+  }
+
   return (
-    <div className="min-h-[100dvh] bg-ink px-5 pb-28 pt-8">
+    /* Modificato il padding top per spingere l'interfaccia al limite in alto del display */
+    <div 
+      className="min-h-[100dvh] bg-ink px-5 pb-28"
+      style={{ paddingTop: 'calc(0.5rem + env(safe-area-inset-top, 0px))' }}
+    >
       <h1 className="font-display text-2xl font-semibold text-white">Carica un video</h1>
-      <p className="mt-1 text-sm text-mist">MP4 o MOV, fino a 100MB.</p>
+      <p className="text-xs text-mist mt-0.5">Condividi un momento speciale su Wave.</p>
 
-      {!previewUrl && (
-        <button
-          onClick={() => inputRef.current?.click()}
-          className="mt-8 flex aspect-[9/14] w-full max-w-[260px] flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-line bg-surface text-mist"
-        >
-          <UploadCloud size={32} />
-          <span className="text-sm font-medium">Tocca per scegliere un video</span>
-        </button>
-      )}
-
-      {previewUrl && (
-        <div className="relative mt-8 aspect-[9/14] w-full max-w-[260px] overflow-hidden rounded-3xl bg-black">
-          <video src={previewUrl} controls className="h-full w-full object-cover" />
+      <div className="mx-auto mt-6 max-w-md space-y-5">
+        
+        {/* Box di caricamento o anteprima video */}
+        {!previewUrl ? (
           <button
-            onClick={() => {
-              setFile(null)
-              setPreviewUrl(null)
-            }}
-            className="absolute right-3 top-3 rounded-full bg-black/60 p-1.5 text-white"
+            onClick={() => inputRef.current?.click()}
+            className="flex aspect-[9/12] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-line bg-surface p-6 text-center text-mist outline-none focus:border-signal"
           >
-            <X size={16} />
+            <UploadCloud size={36} className="text-mist" />
+            <span className="mt-3 text-sm font-medium text-white">Seleziona un file video</span>
+            <span className="mt-1 text-xs text-mist/70">MP4 o formati compatibili fino a 100MB</span>
           </button>
+        ) : (
+          <div className="relative aspect-[9/12] w-full overflow-hidden rounded-2xl bg-black border border-line">
+            <video src={previewUrl} className="h-full w-full object-contain" controls muted />
+            <button
+              onClick={handleRemoveFile}
+              className="absolute right-3 top-3 rounded-full bg-black/60 p-1.5 text-white backdrop-blur active:scale-90 transition-transform"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
+        <input
+          ref={inputRef}
+          type="file"
+          accept="video/*"
+          className="hidden"
+          onChange={(e) => handlePick(e.target.files?.[0] || null)}
+        />
+
+        {/* Input Didascalia */}
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-mist">Didascalia del video</label>
+          <textarea
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            rows={3}
+            maxLength={200}
+            placeholder="Scrivi qualcosa per descrivere il tuo video…"
+            className="w-full resize-none rounded-xl border border-line bg-surface px-4 py-3 text-sm text-white outline-none focus:border-signal"
+          />
+          <p className="mt-1 text-right text-xs text-mist">{caption.length}/200</p>
         </div>
-      )}
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept="video/*"
-        className="hidden"
-        onChange={(e) => handlePick(e.target.files?.[0] || null)}
-      />
+        {error && <p className="text-xs font-medium text-flare leading-relaxed">{error}</p>}
 
-      <textarea
-        value={caption}
-        onChange={(e) => setCaption(e.target.value)}
-        placeholder="Scrivi una didascalia…"
-        rows={3}
-        className="mt-6 w-full max-w-md resize-none rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-white outline-none focus:border-signal"
-      />
+        {/* Pulsante di pubblicazione */}
+        <button
+          onClick={handleUpload}
+          disabled={uploading || !file}
+          className="w-full rounded-full bg-signal py-3.5 font-semibold text-ink disabled:opacity-40 transition-opacity"
+        >
+          {uploading ? 'Caricamento in corso…' : 'Pubblica video'}
+        </button>
 
-      {error && <p className="mt-3 text-sm text-flare">{error}</p>}
-
-      <button
-        onClick={handleUpload}
-        disabled={!file || uploading}
-        className="mt-6 w-full max-w-md rounded-full bg-signal py-3.5 font-semibold text-ink disabled:opacity-50"
-      >
-        {uploading ? 'Pubblicazione…' : 'Pubblica'}
-      </button>
+      </div>
     </div>
   )
 }
