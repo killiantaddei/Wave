@@ -149,7 +149,7 @@ export default function Upload() {
         <button
           onClick={handleUpload}
           disabled={uploading || !file}
-          className="w-full rounded-full bg-signal py-1,5 font-semibold text-ink disabled:opacity-40 transition-opacity"
+          className="w-full rounded-full bg-signal py-9 font-semibold text-ink disabled:opacity-40 transition-opacity"
         >
           {uploading ? 'Caricamento in corso…' : 'Pubblica video'}
         </button>
