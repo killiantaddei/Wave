@@ -29,7 +29,7 @@ body {
 .video-snap-item {
   scroll-snap-stop: always;
   scroll-snap-align: start;
-  height: 100dvh !important; /* dVH adatta l'altezza reale escludendo le barre del browser mobile */
+  height: 100dvh !important; /* dvh adatta l'altezza escludendo le barre dinamiche del browser mobile */
   width: 100% !important;
   display: flex;
   align-items: center;
@@ -47,6 +47,17 @@ body {
   max-height: 100dvh !important;
   object-fit: contain !important; /* Mostra i video orizzontali interi con bande nere */
   margin: auto;
+}
+
+/* --- SUPPORTO SAFE AREA PER SMARTPHONE --- */
+/* Sposta in giù il tasto del volume se c'è la tacca/isola su iPhone */
+.safe-top-padding {
+  top: calc(1rem + env(safe-area-inset-top, 0px)) !important;
+}
+
+/* Alza i testi e i pulsanti dal fondo per evitare la barra Home di iOS o i tasti Android */
+.safe-bottom-padding {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
