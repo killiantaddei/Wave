@@ -16,20 +16,16 @@ export default function Feed() {
   const [activeComments, setActiveComments] = useState<Video | null>(null)
   const [muted, setMuted] = useState(true)
   
-  // Genera un seme casuale univoco al primo caricamento della pagina.
-  // Questo garantisce che la paginazione sia coerente ed eviti video duplicati.
+  // Seme casuale persistente per l'intera sessione di caricamento pagina
   const [seed] = useState(() => Math.random())
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const wheelLockRef = useRef(false)
 
-  // Carica la prima pagina di video casuali all'avvio dell'applicazione
   useEffect(() => {
     loadPage(0, true, seed)
   }, [seed])
 
-  // Forza lo scroll a un video per volta: ogni "tick" della rotellina/trackpad
-  // sposta esattamente un'altezza di schermo, poi blocca per evitare di saltarne più di uno.
   useEffect(() => {
     const container = scrollRef.current
     if (!container) return
@@ -51,13 +47,12 @@ export default function Feed() {
     return () => container.removeEventListener('wheel', onWheel)
   }, [])
 
-  // Recupera i dati da Supabase chiamando la funzione SQL memorizzata sul database
   async function loadPage(p: number, replace = false, currentSeed = seed) {
     setLoading(true)
     const from = p * PAGE_SIZE
     const to = from + PAGE_SIZE - 1
 
-    // Esegue la RPC (Remote Procedure Call) passando seed, inizio e fine range
+    // Richiamo della funzione RPC configurata su Supabase
     const { data, error } = await supabase
       .rpc('get_seeded_random_videos', {
         seed: currentSeed,
@@ -112,9 +107,8 @@ export default function Feed() {
           className="h-full w-full snap-y snap-mandatory overflow-y-scroll overflow-x-hidden scroll-smooth md:my-6 md:h-[90dvh] md:max-w-[420px] md:rounded-3xl md:ring-1 md:ring-line md:shadow-2xl"
         >
           {videos.map((v) => (
-            // Ogni card è avvolta nella classe 'video-snap-item' gestita dal CSS
-            // e nella classe 'video-player-container' per l'object-fit dei video orizzontali
-            <div key={v.id} className="video-snap-item video-player-container w-full h-full relative">
+            /* Struttura esterna rigida per garantire lo snap corretto su smartphone */
+            <div key={v.id} className="video-snap-item">
               <VideoCard
                 video={v}
                 muted={muted}
