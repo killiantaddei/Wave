@@ -16,12 +16,12 @@ export default function Upload() {
 
   if (!session) {
     return (
-      <div className="flex h-[100dvh] flex-col items-center justify-center bg-ink px-9 text-center">
+      <div className="flex h-[100dvh] flex-col items-center justify-center bg-ink px-3 text-center">
         <p className="font-display text-xl font-semibold text-white">Accedi per pubblicare</p>
         <p className="mt-2 text-sm text-mist">Devi avere un account per caricare video su Wave.</p>
         <button
           onClick={() => navigate('/auth')}
-          className="mt-6 rounded-full bg-signal px-6 py-3 font-semibold text-ink"
+          className="mt-6 rounded-full bg-signal px-3 py-3 font-semibold text-ink"
         >
           Vai al login
         </button>
