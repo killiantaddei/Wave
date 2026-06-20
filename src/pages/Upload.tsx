@@ -89,9 +89,9 @@ export default function Upload() {
   }
 
   return (
-    /* Aumentato il padding-bottom a pb-36 per dare spazio allo scroll sopra la barra di navigazione */
+    /* Modificato da min-h-[100dvh] a h-[100dvh] e aggiunto overflow-y-auto per sbloccare lo scroll */
     <div 
-      className="min-h-[100dvh] bg-ink px-5 pb-36"
+      className="h-[100dvh] w-full bg-ink px-5 pb-36 overflow-y-auto"
       style={{ paddingTop: 'calc(0.5rem + env(safe-area-inset-top, 0px))' }}
     >
       <h1 className="font-display text-2xl font-semibold text-white">Carica un video</h1>
@@ -149,7 +149,7 @@ export default function Upload() {
         <button
           onClick={handleUpload}
           disabled={uploading || !file}
-          className="w-full rounded-full bg-signal py-9 font-semibold text-ink disabled:opacity-40 transition-opacity"
+          className="w-full rounded-full bg-signal py-4 font-semibold text-ink disabled:opacity-40 transition-opacity"
         >
           {uploading ? 'Caricamento in corso…' : 'Pubblica video'}
         </button>
