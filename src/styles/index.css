@@ -16,7 +16,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Nasconde la scrollbar nel feed mantenendo lo scroll funzionante */
+/* Nasconde la scrollbar mantenendo lo scroll funzionante */
 .overflow-y-scroll::-webkit-scrollbar {
   display: none;
 }
@@ -29,7 +29,7 @@ body {
 .video-snap-item {
   scroll-snap-stop: always;
   scroll-snap-align: start;
-  height: 100dvh !important; /* dvh adatta l'altezza escludendo le barre dinamiche del browser mobile */
+  height: 100dvh !important; /* dvh adatta l'altezza reale escludendo le barre del browser mobile */
   width: 100% !important;
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@ body {
 }
 
 /* --- SUPPORTO SAFE AREA PER SMARTPHONE --- */
-/* Sposta in giù il tasto del volume se c'è la tacca/isola su iPhone */
+/* Sposta in giù gli elementi se c'è la tacca/isola su iPhone */
 .safe-top-padding {
   top: calc(1rem + env(safe-area-inset-top, 0px)) !important;
 }
