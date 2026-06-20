@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  background-color: #0B0B12;
+}
+
+body {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Nasconde la scrollbar nel feed mantenendo lo scroll funzionante */
+.overflow-y-scroll::-webkit-scrollbar {
+  display: none;
+}
+.overflow-y-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.video-snap-item {
+  scroll-snap-stop: always;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
