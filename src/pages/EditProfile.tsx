@@ -92,7 +92,11 @@ export default function EditProfile() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-ink px-5 pb-28 pt-8">
+    /* Modificato il padding top in linea per agganciarsi al limite assoluto superiore del telefono */
+    <div 
+      className="min-h-[100dvh] bg-ink px-5 pb-28"
+      style={{ paddingTop: 'calc(0.5rem + env(safe-area-inset-top, 0px))' }}
+    >
       <div className="flex items-center gap-3">
         <button onClick={() => navigate('/profile')} className="text-mist">
           <ArrowLeft size={22} />
@@ -100,7 +104,7 @@ export default function EditProfile() {
         <h1 className="font-display text-xl font-semibold text-white">Modifica profilo</h1>
       </div>
 
-      <div className="mt-8 flex flex-col items-center">
+      <div className="mt-6 flex flex-col items-center">
         <button
           onClick={() => fileRef.current?.click()}
           className="relative h-24 w-24 overflow-hidden rounded-full bg-surface2 ring-1 ring-line"
@@ -126,7 +130,7 @@ export default function EditProfile() {
         <p className="mt-2 text-xs text-mist">Tocca per cambiare foto</p>
       </div>
 
-      <div className="mx-auto mt-8 max-w-md space-y-4">
+      <div className="mx-auto mt-6 max-w-md space-y-4">
         <div>
           <label className="mb-1.5 block text-xs font-medium text-mist">Nome utente</label>
           <input
