@@ -52,7 +52,6 @@ export default function Feed() {
     const from = p * PAGE_SIZE
     const to = from + PAGE_SIZE - 1
 
-    // Richiamo della funzione RPC configurata su Supabase
     const { data, error } = await supabase
       .rpc('get_seeded_random_videos', {
         seed: currentSeed,
@@ -107,7 +106,6 @@ export default function Feed() {
           className="h-full w-full snap-y snap-mandatory overflow-y-scroll overflow-x-hidden scroll-smooth md:my-6 md:h-[90dvh] md:max-w-[420px] md:rounded-3xl md:ring-1 md:ring-line md:shadow-2xl"
         >
           {videos.map((v) => (
-            /* Struttura esterna rigida per garantire lo snap corretto su smartphone */
             <div key={v.id} className="video-snap-item">
               <VideoCard
                 video={v}
