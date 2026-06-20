@@ -16,7 +16,7 @@ export default function Upload() {
 
   if (!session) {
     return (
-      <div className="flex h-[100dvh] flex-col items-center justify-center bg-ink px-6 text-center">
+      <div className="flex h-[100dvh] flex-col items-center justify-center bg-ink px-9 text-center">
         <p className="font-display text-xl font-semibold text-white">Accedi per pubblicare</p>
         <p className="mt-2 text-sm text-mist">Devi avere un account per caricare video su Wave.</p>
         <button
