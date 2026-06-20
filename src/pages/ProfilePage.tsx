@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { LogOut, Play, Pencil } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
@@ -72,7 +72,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-ink px-5 pb-28 pt-10">
+    /* Modificato il padding top per agganciarsi al limite assoluto superiore del telefono */
+    <div 
+      className="min-h-[100dvh] bg-ink px-5 pb-28"
+      style={{ paddingTop: 'calc(0.5rem + env(safe-area-inset-top, 0px))' }}
+    >
       <div className="flex items-center justify-between">
         <div className="h-20 w-20 overflow-hidden rounded-full bg-surface2 ring-1 ring-line">
           {profile.avatar_url && <img src={profile.avatar_url} className="h-full w-full object-cover" />}
