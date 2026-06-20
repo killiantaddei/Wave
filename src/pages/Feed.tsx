@@ -15,13 +15,18 @@ export default function Feed() {
   const [hasMore, setHasMore] = useState(true)
   const [activeComments, setActiveComments] = useState<Video | null>(null)
   const [muted, setMuted] = useState(true)
+  
+  // Genera un seme casuale univoco al primo caricamento della pagina.
+  // Questo garantisce che la paginazione sia coerente ed eviti video duplicati.
+  const [seed] = useState(() => Math.random())
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const wheelLockRef = useRef(false)
 
+  // Carica la prima pagina di video casuali all'avvio dell'applicazione
   useEffect(() => {
-    loadPage(0, true)
-  }, [])
+    loadPage(0, true, seed)
+  }, [seed])
 
   // Forza lo scroll a un video per volta: ogni "tick" della rotellina/trackpad
   // sposta esattamente un'altezza di schermo, poi blocca per evitare di saltarne più di uno.
@@ -46,16 +51,20 @@ export default function Feed() {
     return () => container.removeEventListener('wheel', onWheel)
   }, [])
 
-  async function loadPage(p: number, replace = false) {
+  // Recupera i dati da Supabase chiamando la funzione SQL memorizzata sul database
+  async function loadPage(p: number, replace = false, currentSeed = seed) {
     setLoading(true)
     const from = p * PAGE_SIZE
     const to = from + PAGE_SIZE - 1
 
+    // Esegue la RPC (Remote Procedure Call) passando seed, inizio e fine range
     const { data, error } = await supabase
-      .from('videos')
+      .rpc('get_seeded_random_videos', {
+        seed: currentSeed,
+        page_from: from,
+        page_to: to
+      })
       .select('*, profiles(*)')
-      .order('created_at', { ascending: false })
-      .range(from, to)
 
     if (!error && data) {
       let withLikes = data as Video[]
@@ -103,13 +112,16 @@ export default function Feed() {
           className="h-full w-full snap-y snap-mandatory overflow-y-scroll overflow-x-hidden scroll-smooth md:my-6 md:h-[90dvh] md:max-w-[420px] md:rounded-3xl md:ring-1 md:ring-line md:shadow-2xl"
         >
           {videos.map((v) => (
-            <VideoCard
-              key={v.id}
-              video={v}
-              muted={muted}
-              onToggleMute={() => setMuted((m) => !m)}
-              onOpenComments={setActiveComments}
-            />
+            // Ogni card è avvolta nella classe 'video-snap-item' gestita dal CSS
+            // e nella classe 'video-player-container' per l'object-fit dei video orizzontali
+            <div key={v.id} className="video-snap-item video-player-container w-full h-full relative">
+              <VideoCard
+                video={v}
+                muted={muted}
+                onToggleMute={() => setMuted((m) => !m)}
+                onOpenComments={setActiveComments}
+              />
+            </div>
           ))}
         </div>
       </div>
